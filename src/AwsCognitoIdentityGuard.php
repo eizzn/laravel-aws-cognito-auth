@@ -336,7 +336,7 @@ class AwsCognitoIdentityGuard implements StatefulGuard
                     'REFRESH_TOKEN' => $refreshToken,
                 ],
                 'ClientId' => $this->getDefaultAppConfig()['client-id'],
-                'UserPoolId' => $this->config['pool-id'],
+                'UserPoolId' => $this->getDefaultAppConfig()['pool-id'],
             ]);
 
         } catch (CognitoIdentityProviderException $e) {
@@ -563,7 +563,7 @@ class AwsCognitoIdentityGuard implements StatefulGuard
                     'PASSWORD' => $password,
                 ],
                 'ClientId' => $this->getDefaultAppConfig()['client-id'],
-                'UserPoolId' => $this->config['pool-id'],
+                'UserPoolId' => $this->getDefaultAppConfig()['pool-id'],
             ]);
 
             return new AuthAttempt(!!$response['AuthenticationResult'], $response->toArray());
@@ -991,7 +991,12 @@ class AwsCognitoIdentityGuard implements StatefulGuard
      */
     protected function getDefaultAppConfig()
     {
-        return $this->config['apps'][$this->config['app']];
+        // return $this->config['apps'][$this->config['app']];
+        if ($this->lastAttempted->isEmployee()) {
+            return $this->config['apps']['employee'];
+        } elseif ($this->lastAttempted->isCustomer()) {
+            return $this->config['apps']['customer'];
+        }
     }
 
     /**
